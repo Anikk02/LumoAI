@@ -46,31 +46,58 @@ export default function ChatWindow({ userId }) {
 
   // ------------------ LOAD HISTORY ------------------
   useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetchHistory(userId || user?.username, 50);
-        const docs = (res.data || []).slice().reverse();
+  async function load() {
+    try {
+      const res = await fetchHistory(userId || user?.username, 50);
 
-        const formatted = [];
-        docs.forEach((d) => {
-          formatted.push({ from: "user", text: d.user_input, time: d.timestamp });
-          // format the stored model_response for display
-          const rawResponse = d.model_response || "";
-          formatted.push({
-            from: "bot",
-            text: formatMessage(rawResponse), // <-- format history responses
-            time: d.timestamp,
-            crisis: d.crisis_flag,
-          });
+      let docs = [];
+
+      // ✅ Normalize ALL possible backend shapes
+      if (Array.isArray(res?.data)) {
+        docs = res.data;
+      } else if (Array.isArray(res?.data?.items)) {
+        docs = res.data.items;
+      } else if (Array.isArray(res?.data?.docs)) {
+        docs = res.data.docs;
+      } else if (typeof res?.data === "object" && res?.data !== null) {
+        docs = Object.values(res.data); // <-- CRITICAL FIX
+      }
+
+      if (!Array.isArray(docs)) {
+        console.warn("History data is not an array:", res.data);
+        docs = [];
+      }
+
+      const formatted = [];
+
+      [...docs].reverse().forEach((d) => {
+        formatted.push({
+          from: "user",
+          text: d.user_input || "",
+          time: d.created_at || d.timestamp,
         });
 
-        setMessages(formatted);
-      } catch (e) {
-        console.error("History load error:", e);
-      }
+        formatted.push({
+          from: "bot",
+          text: formatMessage(
+            d.model_response || d.chatbot_output || ""
+          ),
+          time: d.created_at || d.timestamp,
+          crisis: d.crisis_flag,
+        });
+      });
+
+      setMessages(formatted);
+    } catch (e) {
+      console.error("History load error:", e);
+      setMessages([]);
     }
-    load();
-  }, [userId, user]);
+  }
+
+  if (userId || user?.username) load();
+}, [userId, user]);
+
+
 
   // ------------------ AUTO SCROLL ------------------
   useEffect(() => {

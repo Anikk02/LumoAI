@@ -7,16 +7,29 @@ export default function HistoryList({ userId }) {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    async function load() {
-      try {
-        const r = await fetchHistory(userId, 50);
-        setItems(r.data || []);
-      } catch (e) {
-        console.error("history fetch error", e);
-      }
+  async function load() {
+    try {
+      const r = await fetchHistory(userId, 50);
+
+      const raw = r?.data;
+
+      // Normalize response
+      const list = Array.isArray(raw)
+        ? raw
+        : Array.isArray(raw?.items)
+        ? raw.items
+        : [];
+
+      setItems(list);
+    } catch (e) {
+      console.error("history fetch error", e);
+      setItems([]);
     }
-    if (userId) load();
-  }, [userId]);
+  }
+
+  if (userId) load();
+}, [userId]);
+
 
   if (!items.length) {
     return (
