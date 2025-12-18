@@ -58,28 +58,24 @@ export function AuthProvider({ children }) {
   // ----------------------------------------
   async function handleLogin(username, password) {
     try {
-    const res = await login(username, password);
+      const res = await login(username, password);
 
-    const { access_token, refresh_token, user } = res.data;
+      const { access_token, refresh_token } = res.data;
+      localStorage.setItem(ACCESS_KEY, access_token);
+      localStorage.setItem(REFRESH_KEY, refresh_token);
 
-    localStorage.setItem(ACCESS_KEY, access_token);
-    localStorage.setItem(REFRESH_KEY, refresh_token);
+      storeUser({ username });
+      return { ok: true };
+    } catch (err) {
+      if (err.twoFactorRequired) {
+        setPending2FAUser(username);
+        return { twoFactor: true };
+      }
 
-    // ✅ STORE FULL USER (THIS FIXES EVERYTHING)
-    storeUser(user);
-
-    return { ok: true };
-  } catch (err) {
-    if (err.twoFactorRequired) {
-      setPending2FAUser(username);
-      return { twoFactor: true };
+      let msg = err.response?.data?.detail || "Login failed";
+      return { error: msg };
     }
-
-    let msg = err.response?.data?.detail || "Login failed";
-    return { error: msg };
   }
-}
-
 
   // ----------------------------------------
   // VERIFY 2FA CODE
