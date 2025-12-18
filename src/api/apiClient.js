@@ -124,6 +124,7 @@ export const verifyEmail = (token, uid) =>
 export const resendVerification = (email) =>
   api.post(`/api/auth/resend-verification?email=${email}`);
 
+
 export const requestPasswordReset = (email) =>
   api.post("/api/auth/password-reset/request", { email });
 
