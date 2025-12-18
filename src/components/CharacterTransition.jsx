@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./characterTransition.css";
+import "./CharacterTransition.css";
 
 export default function CharacterTransition({ onFinish }) {
   const [stage, setStage] = useState(0); // 0=sad, 1=neutral, 2=calm, 3=happy
