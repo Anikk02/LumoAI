@@ -13,7 +13,7 @@ export default function PasswordResetConfirm() {
   const [msg, setMsg] = useState("");
   const [err, setErr] = useState("");
 
-  async function submit(e) {
+async function submit(e) {
   e.preventDefault();
   setErr("");
   setMsg("");
@@ -23,19 +23,30 @@ export default function PasswordResetConfirm() {
     return;
   }
 
+  // ✅ Frontend validation
+  if (password.length < 6) {
+    setErr("Password must be at least 6 characters long.");
+    return;
+  }
+
   try {
     const r = await confirmPasswordReset(token, password);
 
     if (r?.data?.ok) {
       setMsg("Password updated successfully! You can now login.");
+      setPassword("");
     } else {
       setErr("Invalid or expired token. Try requesting a new link.");
     }
   } catch (e) {
-    setErr(
-      e?.response?.data?.detail ||
-      "Password reset failed. Please try again."
-    );
+    const detail = e?.response?.data?.detail;
+
+    // ✅ Handle FastAPI 422 validation errors
+    if (Array.isArray(detail)) {
+      setErr(detail[0]?.msg || "Invalid input.");
+    } else {
+      setErr(detail || "Password reset failed. Please try again.");
+    }
   }}
 
   return (
