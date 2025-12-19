@@ -1425,3 +1425,84 @@ input:checked + .slider:before {
   margin-right: 6px;
 }
 
+/* ===== Mental State Overview ===== */
+.mood-overview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+
+  background: linear-gradient(180deg, #f6fbfa, #eef7f6);
+  border-radius: 18px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+}
+
+/* Risk badge */
+.risk-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Risk colors */
+.risk-low {
+  background: rgba(47, 143, 139, 0.12);
+  color: #2f8f8b;
+}
+
+.risk-medium {
+  background: rgba(231, 164, 74, 0.15);
+  color: #e7a44a;
+}
+
+.risk-high {
+  background: rgba(217, 83, 79, 0.15);
+  color: #d9534f;
+}
+
+.risk-critical {
+  background: rgba(181, 43, 39, 0.18);
+  color: #b52b27;
+}
+
+/* Overview rows */
+.overview-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 8px 12px;
+  background: #ffffff;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.overview-row span {
+  color: #6f8a8a;
+}
+
+.overview-row b {
+  color: #1f3f3e;
+  font-weight: 600;
+}
+
+/* Responsive (mobile-friendly) */
+@media (max-width: 640px) {
+  .mood-overview {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .risk-badge,
+  .overview-row {
+    justify-content: center;
+  }
+}
