@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./characterTransition.css";
 
 export default function CharacterTransition({ onFinish }) {
-  const [stage, setStage] = useState(0); // 0=sad, 1=neutral, 2=calm, 3=happy
+  const [stage, setStage] = useState(0);
+
   const messages = [
     "It's okay to feel down sometimes...",
     "Take a slow, deep breath...",
@@ -11,20 +12,30 @@ export default function CharacterTransition({ onFinish }) {
   ];
 
   useEffect(() => {
+    const timeouts = [];
+
     const timings = [0, 1600, 3200, 4800];
 
     timings.forEach((t, i) => {
-      setTimeout(() => setStage(i), t);
+      timeouts.push(
+        setTimeout(() => setStage(i), t)
+      );
     });
 
-    setTimeout(() => {
-      if (onFinish) onFinish();
-    }, 6400);
+    timeouts.push(
+      setTimeout(() => {
+        onFinish?.();
+      }, 6400)
+    );
+
+    // ✅ CLEANUP
+    return () => {
+      timeouts.forEach(clearTimeout);
+    };
   }, [onFinish]);
 
   return (
     <div className="character-trans-container enhanced-bg">
-      {/* Floating particles */}
       <div className="particle p1"></div>
       <div className="particle p2"></div>
       <div className="particle p3"></div>
