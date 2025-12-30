@@ -1,12 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack(config, { dev }) {
-    if (!dev) {
-      config.devtool = false; // 🚨 CRITICAL
-    }
-    return config;
-  },
-  reactStrictMode: false
+  reactStrictMode: false,
+  productionBrowserSourceMaps: false // ✅ SAFE way
 };
 
 module.exports = nextConfig;
